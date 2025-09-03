@@ -10,10 +10,21 @@ class ProvinceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $req)
     {
+        // ? where
+        $province = Province::query(); // ORM eloquent
+        if ($req->has("search")) {
+            // $category->where("name", "=", $req->input("search"));
+            $province->where("name", "LIKE", "%" . $req->input("search") . "%");
+        }
+        if ($req->has("status")) {
+            $province->where("status", "=", $req->input("status"));
+        }
+        $list = $province->get();
         return response()->json([
-            "list" => Province::all()
+            "list" => $list,
+            "query" => $req->input("search")
         ]);
     }
 

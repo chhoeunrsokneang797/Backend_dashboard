@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProvinceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,5 +24,15 @@ Route::delete("role/{id}", [RoleController::class, 'destory']);
 Route::post("role/changeStatus", [RoleController::class, 'changeStatus']);
 
 // category
-Route::apiResource("/categories", CategoryController::class);
-Route::apiResource("province", ProvinceController::class);
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::apiResource("categories", CategoryController::class);
+    Route::apiResource("province", ProvinceController::class); // ->withoutMiddleware('auth:api')
+    Route::apiResource("brands", BrandController::class);
+    Route::apiResource("products", ProductController::class);
+});
+
+
+
+// Auth
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
